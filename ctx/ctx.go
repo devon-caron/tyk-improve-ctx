@@ -3,6 +3,7 @@ package ctx
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/TykTechnologies/tyk/apidef"
@@ -88,6 +89,56 @@ func GetAuthToken(r *http.Request) string {
 		}
 	}
 	return ""
+}
+
+// GetRequestSession will retrieve a reference to an existing request's session data.
+// Returns an error if either session doesn't exist for the provided request, or if using a legacy
+// SessionState type and marshalling errors occur.
+func GetRequestSession(r *http.Request) (*user.SessionState, error) {
+	v := r.Context().Value(SessionData)
+
+	if v == nil {
+		return nil, fmt.Errorf("session data does not yet exist for this request")
+	}
+
+	if val, ok := v.(*user.SessionState); ok {
+		return val, nil
+	} else {
+		logger.Get().Warning("SessionState struct differ from the gateway version, trying to unmarshal.")
+
+		sess := user.SessionState{}
+		b, err := json.Marshal(v)
+		if err != nil {
+			logger.Get().Errorf("error marshalling session data: %v", err)
+			return nil, fmt.Errorf("error marshalling session data: %v", err)
+		}
+
+		err = json.Unmarshal(b, &sess)
+		if err != nil {
+			return nil, fmt.Errorf("error unmarshalling session data: %v", err)
+		}
+
+		return &sess, nil
+	}
+}
+
+// SetRequestSession sets s as the session data for a request. Signals the gateway to update
+// the session data internally if scheduleUpdate is true. Optionally, sets a hash key for the session if
+// one does not already exist. Returns an error if one is encountered while setting session state.
+func SetRequestSession(r *http.Request, s *user.SessionState, scheduleUpdate bool, hashKey ...bool) error {
+	var returnErr error = nil
+	defer func() {
+		if r := recover(); r != nil {
+			returnErr = fmt.Errorf("error setting session state: %v", r)
+		}
+	}()
+
+	if len(hashKey) > 1 {
+		ctxSetSession(r, s, scheduleUpdate, hashKey[0])
+	} else {
+		ctxSetSession(r, s, scheduleUpdate, config.Global().HashKeys)
+	}
+	return returnErr
 }
 
 // GetSession will retrieve a reference to an existing request's session data, or nil if it does not exist.

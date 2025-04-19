@@ -90,6 +90,7 @@ func GetAuthToken(r *http.Request) string {
 	return ""
 }
 
+// GetSession will retrieve a reference to an existing request's session data, or nil if it does not exist.
 func GetSession(r *http.Request) *user.SessionState {
 	if v := r.Context().Value(SessionData); v != nil {
 		if val, ok := v.(*user.SessionState); ok {
@@ -107,6 +108,9 @@ func GetSession(r *http.Request) *user.SessionState {
 	return nil
 }
 
+// SetSession sets s as the session data for a request. Signals the gateway to update
+// the session data internally if scheduleUpdate is true. Optionally, sets a hash key for the session if
+// one does not already exist.
 func SetSession(r *http.Request, s *user.SessionState, scheduleUpdate bool, hashKey ...bool) {
 	if len(hashKey) > 1 {
 		ctxSetSession(r, s, scheduleUpdate, hashKey[0])

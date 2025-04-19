@@ -105,6 +105,8 @@ func GetSession(r *http.Request) *user.SessionState {
 			}
 		}
 	}
+
+	logger.Get().Warning("Empty session retrieved")
 	return nil
 }
 

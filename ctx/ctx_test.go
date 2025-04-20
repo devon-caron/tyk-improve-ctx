@@ -1,7 +1,12 @@
 package ctx_test
 
 import (
+	"context"
+	"fmt"
+	"github.com/TykTechnologies/tyk/ctx"
+	"github.com/TykTechnologies/tyk/user"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/getkin/kin-openapi/openapi3"
@@ -9,9 +14,31 @@ import (
 
 	"github.com/TykTechnologies/tyk/apidef"
 	"github.com/TykTechnologies/tyk/apidef/oas"
-	"github.com/TykTechnologies/tyk/ctx"
+
 	"github.com/TykTechnologies/tyk/internal/uuid"
 )
+
+func TestGetSetNilRequestSession(t *testing.T) {
+	req := httptest.NewRequest("GET", "http://example.com", nil)
+
+	var sessionData *user.SessionState = nil
+
+	err := ctx.SetRequestSession(req, sessionData, true, false, false)
+	if err == nil {
+		t.Error("want error value 'setting a nil context SessionData', got nil error")
+	} else if !strings.Contains(err.Error(), "setting a nil context SessionData") {
+		t.Errorf("want error value 'setting a nil context SessionData', got '%v'", err)
+	}
+
+	var nilSession *user.SessionState
+	nilSession, err = ctx.GetRequestSession(req)
+	if err != nil && !strings.Contains(err.Error(), "session data does not yet exist for this request") {
+		fmt.Printf("reached here")
+		panic(err)
+	}
+
+	assert.Nil(t, nilSession)
+}
 
 // Test for GetDefinition
 func TestGetDefinition(t *testing.T) {

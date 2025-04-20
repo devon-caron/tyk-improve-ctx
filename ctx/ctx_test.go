@@ -2,7 +2,6 @@ package ctx_test
 
 import (
 	"context"
-	"fmt"
 	"github.com/TykTechnologies/tyk/ctx"
 	"github.com/TykTechnologies/tyk/user"
 	"net/http/httptest"
@@ -33,7 +32,6 @@ func TestGetSetNilRequestSession(t *testing.T) {
 	var nilSession *user.SessionState
 	nilSession, err = ctx.GetRequestSession(req)
 	if err != nil && !strings.Contains(err.Error(), "session data does not yet exist for this request") {
-		fmt.Printf("reached here")
 		panic(err)
 	}
 
@@ -75,7 +73,6 @@ func TestGetSetRequestSession(t *testing.T) {
 
 	nilSession, err := ctx.GetRequestSession(req)
 	if err != nil && !strings.Contains(err.Error(), "session data does not yet exist for this request") {
-		fmt.Printf("reached here")
 		panic(err)
 	}
 

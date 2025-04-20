@@ -125,8 +125,8 @@ func GetRequestSession(r *http.Request) (*user.SessionState, error) {
 // SetRequestSession sets s as the session data for a request. Signals the gateway to update
 // the session data internally if scheduleUpdate is true. Optionally, sets a hash key for the session if
 // one does not already exist. Returns an error if one is encountered while setting session state.
-func SetRequestSession(r *http.Request, s *user.SessionState, scheduleUpdate bool, hashKey ...bool) error {
-	var returnErr error = nil
+func SetRequestSession(r *http.Request, s *user.SessionState, scheduleUpdate bool, hashKey ...bool) (returnErr error) {
+	returnErr = nil
 	defer func() {
 		if r := recover(); r != nil {
 			returnErr = fmt.Errorf("error setting session state: %v", r)

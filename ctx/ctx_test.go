@@ -40,6 +40,30 @@ func TestGetSetNilRequestSession(t *testing.T) {
 	assert.Nil(t, nilSession)
 }
 
+func TestGetSetLegacyRequestSession(t *testing.T) {
+	metadata := make(map[string]interface{})
+	legacyMetadata := make(map[string]interface{})
+	testId := uuid.New()
+	metadata["TEST_ID"] = testId
+	legacyMetadata["TEST_ID"] = testId
+
+	v := struct {
+		MetaData map[string]interface{} `json:"meta_data"`
+	}{
+		MetaData: legacyMetadata,
+	}
+
+	req := httptest.NewRequest("GET", "http://example.com", nil).WithContext(context.WithValue(context.Background(), ctx.SessionData, v))
+
+	legacySession, err := ctx.GetRequestSession(req)
+	if err != nil {
+		panic(err)
+	}
+
+	assert.Equal(t, legacySession.MetaData, metadata)
+}
+
+
 // Test for GetDefinition
 func TestGetDefinition(t *testing.T) {
 	apiDef := &apidef.APIDefinition{

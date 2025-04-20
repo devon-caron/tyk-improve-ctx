@@ -122,8 +122,8 @@ func GetRequestSession(r *http.Request) (*user.SessionState, error) {
 }
 
 // SetRequestSession sets s as the session data for a request. Signals the gateway to update
-// the session data internally if scheduleUpdate is true. Optionally, sets a hash key for the session if
-// one does not already exist. Returns an error if one is encountered while setting session state.
+// the session data internally if scheduleUpdate is true. Optionally, specify whether to
+// obfuscate/hash tokens in Redis. Returns an error if one is encountered while setting session state.
 func SetRequestSession(r *http.Request, s *user.SessionState, scheduleUpdate bool, hashKey ...bool) (returnErr error) {
 	returnErr = nil
 	defer func() {
@@ -161,8 +161,8 @@ func GetSession(r *http.Request) *user.SessionState {
 }
 
 // SetSession sets s as the session data for a request. Signals the gateway to update
-// the session data internally if scheduleUpdate is true. Optionally, sets a hash key for the session if
-// one does not already exist.
+// the session data internally if scheduleUpdate is true. Optionally, specify whether to
+// obfuscate/hash tokens in Redis.
 func SetSession(r *http.Request, s *user.SessionState, scheduleUpdate bool, hashKey ...bool) {
 	if len(hashKey) > 1 {
 		ctxSetSession(r, s, scheduleUpdate, hashKey[0])

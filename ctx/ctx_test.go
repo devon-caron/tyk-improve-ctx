@@ -17,6 +17,7 @@ import (
 	"github.com/TykTechnologies/tyk/internal/uuid"
 )
 
+// Testing GetRequestSession and SetRequestSession behavior with nil session data
 func TestGetSetNilRequestSession(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://example.com", nil)
 
@@ -38,7 +39,8 @@ func TestGetSetNilRequestSession(t *testing.T) {
 	assert.Nil(t, nilSession)
 }
 
-func TestGetSetLegacyRequestSession(t *testing.T) {
+// Testing GetRequestSession with a legacy user.SessionState type
+func TestLegacyRequestSession(t *testing.T) {
 	metadata := make(map[string]interface{})
 	legacyMetadata := make(map[string]interface{})
 	testId := uuid.New()

@@ -109,13 +109,12 @@ func GetRequestSession(r *http.Request) (*user.SessionState, error) {
 		sess := user.SessionState{}
 		b, err := json.Marshal(v)
 		if err != nil {
-			logger.Get().Errorf("error marshalling session data: %v", err)
-			return nil, fmt.Errorf("error marshalling session data: %v", err)
+			return nil, fmt.Errorf("error marshalling legacy session data: %v", err)
 		}
 
 		err = json.Unmarshal(b, &sess)
 		if err != nil {
-			return nil, fmt.Errorf("error unmarshalling session data: %v", err)
+			return nil, fmt.Errorf("error unmarshalling legacy session data: %v", err)
 		}
 
 		return &sess, nil

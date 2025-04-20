@@ -63,6 +63,37 @@ func TestGetSetLegacyRequestSession(t *testing.T) {
 	assert.Equal(t, legacySession.MetaData, metadata)
 }
 
+// Test for GetRequestSession and SetRequestSession
+func TestGetSetRequestSession(t *testing.T) {
+	metadata := make(map[string]interface{})
+	metadata["TEST_ID"] = uuid.New()
+	sessionData := &user.SessionState{
+		MetaData: metadata,
+	}
+
+	req := httptest.NewRequest("GET", "http://example.com", nil)
+
+	nilSession, err := ctx.GetRequestSession(req)
+	if err != nil && !strings.Contains(err.Error(), "session data does not yet exist for this request") {
+		fmt.Printf("reached here")
+		panic(err)
+	}
+
+	assert.Nil(t, nilSession)
+
+	err = ctx.SetRequestSession(req, sessionData, true, false, false)
+	if err != nil {
+		panic(err)
+	}
+
+	var retrievedSession *user.SessionState
+	retrievedSession, err = ctx.GetRequestSession(req)
+	if err != nil {
+		panic(err)
+	}
+
+	assert.Equal(t, sessionData, retrievedSession)
+}
 
 // Test for GetDefinition
 func TestGetDefinition(t *testing.T) {

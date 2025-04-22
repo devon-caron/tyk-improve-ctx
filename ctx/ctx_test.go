@@ -102,7 +102,7 @@ func TestGetSetRequestSession(t *testing.T) {
 
 	assert.Nil(t, nilSession)
 
-	err = ctx.SetRequestSession(req, sessionData, true, false, false)
+	err = ctx.SetRequestSession(req, sessionData, true)
 	if err != nil {
 		panic(err)
 	}

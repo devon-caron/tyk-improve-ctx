@@ -129,7 +129,7 @@ func SetRequestSession(r *http.Request, s *user.SessionState, scheduleUpdate boo
 		return fmt.Errorf("error: attempted to set a nil context SessionData")
 	}
 
-	if len(hashKey) > 1 {
+	if len(hashKey) > 0 {
 		ctxSetSession(r, s, scheduleUpdate, hashKey[0])
 	} else {
 		ctxSetSession(r, s, scheduleUpdate, config.Global().HashKeys)

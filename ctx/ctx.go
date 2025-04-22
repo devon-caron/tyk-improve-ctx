@@ -131,10 +131,14 @@ func SetRequestSession(r *http.Request, s *user.SessionState, scheduleUpdate boo
 
 	if len(hashKey) > 0 {
 		ctxSetSession(r, s, scheduleUpdate, hashKey[0])
-	} else {
+	} else if config.Global != nil {
 		ctxSetSession(r, s, scheduleUpdate, config.Global().HashKeys)
+	} else {
+		logger.Get().Warnf("Global config not set, defaulting to no-hash")
+		ctxSetSession(r, s, scheduleUpdate, false)
 	}
-	return returnErr
+
+	return nil
 }
 
 // GetSession will retrieve a reference to an existing request's session data, or nil if it does not exist.

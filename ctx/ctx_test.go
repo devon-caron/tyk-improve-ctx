@@ -17,6 +17,30 @@ import (
 	"github.com/TykTechnologies/tyk/internal/uuid"
 )
 
+// Test for SetRequestSession, where the required number of extra parameters is only one
+func TestGetSetRequestSessionReducedHashKeyLength(t *testing.T) {
+	metadata := make(map[string]interface{})
+	metadata["TEST_ID"] = uuid.New()
+	sessionData := &user.SessionState{
+		MetaData: metadata,
+	}
+
+	req := httptest.NewRequest("GET", "http://example.com", nil)
+
+	err := ctx.SetRequestSession(req, sessionData, true, false)
+	if err != nil {
+		panic(err)
+	}
+
+	var retrievedSession *user.SessionState
+	retrievedSession, err = ctx.GetRequestSession(req)
+	if err != nil {
+		panic(err)
+	}
+
+	assert.Equal(t, sessionData, retrievedSession)
+}
+
 // Testing GetRequestSession and SetRequestSession behavior with nil session data
 func TestGetSetNilRequestSession(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://example.com", nil)

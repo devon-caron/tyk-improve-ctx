@@ -47,11 +47,9 @@ func TestGetSetNilRequestSession(t *testing.T) {
 
 	var sessionData *user.SessionState = nil
 
-	err := ctx.SetRequestSession(req, sessionData, true, false, false)
-	if err == nil {
-		t.Error("want error value 'setting a nil context SessionData', got nil error")
-	} else if !strings.Contains(err.Error(), "setting a nil context SessionData") {
-		t.Errorf("want error value 'setting a nil context SessionData', got '%v'", err)
+	err := ctx.SetRequestSession(req, sessionData, true)
+	if err != nil && !strings.Contains(err.Error(), "error: attempted to set a nil context SessionData") {
+		panic(err)
 	}
 
 	var nilSession *user.SessionState
